@@ -1,0 +1,11 @@
+scan_filter_chain:
+  ros__parameters:
+    filter1:
+      name: angle_filter
+      type: laser_filters/LaserScanAngularBoundsFilterInPlace
+      params:
+        # Tudo que estiver FORA desse limite será deletado do mapa
+        # Lidar 0 radianos = Frente do robô.
+        # Aqui estamos mantendo apenas a visão 180 graus da frente (de -90 a +90 graus)
+        lower_angle: -1.5708  # -90 graus em radianos
+        upper_angle: 1.5708   # +90 graus em radianos

@@ -1,0 +1,85 @@
+slam_toolbox:
+  ros__parameters:
+
+    # Plugin params
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+
+    # ROS Parameters
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_footprint
+    scan_topic: /scan_limpo
+    use_map_saver: true
+    mode: mapping
+
+    debug_logging: false
+    throttle_scans: 1
+    transform_publish_period: 0.02
+    map_update_interval: 3.0        # era 5.0 — atualiza mais rápido
+
+    # MELHORIA 1: Resolução aumentada (0.03 vs 0.05 original)
+    # Mapas mais detalhados — use 0.04 se a CPU forçar muito
+    resolution: 0.03
+
+    min_laser_range: 0.15           # era 0.0 — remove ruído perto do robô
+    max_laser_range: 10.0           # era 12.0 — ignora leituras instáveis longe
+
+    minimum_time_interval: 0.3      # era 0.5 — processa scans mais frequente
+    transform_timeout: 0.5
+    tf_buffer_duration: 30.0
+    stack_size_to_use: 40000000
+    enable_interactive_mode: true
+
+    # General Parameters
+    use_scan_matching: true
+    use_scan_barycenter: true
+
+    # Gatilho de atualização
+    minimum_travel_distance: 0.1
+    minimum_travel_heading: 0.1
+
+    # MELHORIA 2: Buffer maior para melhor loop closing
+    scan_buffer_size: 20            # era 10 — mais scans na memória
+    scan_buffer_maximum_scan_distance: 10.0
+    link_match_minimum_response_fine: 0.15  # era 0.1 — mais exigente
+    link_scan_maximum_distance: 1.5
+    loop_search_maximum_distance: 3.0
+    do_loop_closing: true
+
+    # MELHORIA 3: Loop closing mais exigente = menos ruído espúrio
+    loop_match_minimum_chain_size: 15       # era 10 — só fecha loops confiáveis
+    loop_match_maximum_variance_coarse: 2.0 # era 3.0 — mais restrito
+    loop_match_minimum_response_coarse: 0.45 # era 0.35 — mais exigente
+    loop_match_minimum_response_fine: 0.55  # era 0.45 — mais exigente
+
+    # Correlation Parameters
+    correlation_search_space_dimension: 0.7   # era 0.5 — mais liberdade p/ desviar da odometria
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1
+
+    # Loop Closure Parameters
+    loop_search_space_dimension: 10.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+
+    # Scan Matcher — confia mais no lidar que na odometria
+    distance_variance_penalty: 0.0005  # penalidade por erro de translação (reduzido: menos confiança na odometria)
+    angle_variance_penalty: 0.0005     # penalidade por erro de rotação (reduzido: menos confiança na odometria)
+
+
+    fine_search_angle_offset: 0.1
+    coarse_search_angle_offset: 0.5
+    coarse_angle_resolution: 0.0349
+
+    minimum_angle_penalty: 0.001      # penalidade mínima de ângulo
+    minimum_distance_penalty: 0.1     # penalidade mínima de distância
+    use_response_expansion: true
+
+    # MELHORIA 4: Ocupação mais exigente = menos células fantasmas no mapa
+    min_pass_through: 3             # era 2 — raio precisa passar 3x para limpar célula
+    occupancy_threshold: 0.15       # era 0.1 — mais conservador para marcar ocupado
